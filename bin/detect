@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# This script takes BUILD_DIR as a single argument and must return an exit code of 0 if the app present at BUILD_DIR can be serviced by this buildpack. If the exit code is 0, the script must print a human-readable framework name to stdout.
+# See https://devcenter.heroku.com/articles/buildpack-api#bin-detect for additional documentation on this value
+
+echo "Vault"
+exit 0
