@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-echo "Do nothing"
-exit 0

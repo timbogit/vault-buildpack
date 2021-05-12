@@ -36,7 +36,7 @@ function parse_args {
 
   if [[ $# > 3 ]]; then
     echo "-----> Heroku has changed the arguments passed, unable to proceed"
-    exit ((1 + $#))
+    exit $((1 + $#))
   fi
 
   BUILD_DIR=$1
@@ -51,7 +51,7 @@ function read_vault_version {
   local variable_dir=$1
 
   if [[ -d ${variable_dir} ]]; then
-    for $variable in "${VAULT_VARIABLES[@]}"; do
+    for variable in "${VAULT_VARIABLES[@]}"; do
       local location="${variable_dir}/${variable}"
 
       if [ ! -f $location ]; then
@@ -79,10 +79,7 @@ function install_vault {
   if [ ! -e $file ]; then
     echo "-----> Installing vault version ${VAULT_VERSION}"
   
-    curl --retry 2 \
-      --silent \
-      ${PACKAGE_LOCATION}/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip \
-      --output vault.zip
+    curl --silent ${PACKAGE_LOCATION}/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip --output vault.zip
     
     unzip vault.zip
     mv vault $file
@@ -99,20 +96,19 @@ function prepare_environment {
   echo "---> Preparing environment for compatibility"
 
   local build_location=$1
-  local bin=$2
   local profile_location="${build_location}/.profile.d"
 
   mkdir -p "${profile_location}"
-  echo 'export PATH="$PATH:$bin"' >> $profile_location/vault.sh
+  echo 'export PATH="$PATH:$HOME/.vault-buildpack/"' >> ${profile_location}/vault.sh
 }
 
 # Handles orchestrating of the build steps for the script
-main {
+function main {
   echo "-> Vault buildpack compilation starting"
   parse_args "$@"
-  read_vault_version $ENV_DIR
-  install_vault $BUILD_DIR $CACHE_DIR $VAULT_VERSION
-  prepare_environment $BUILD_DIR $VAULT_BIN
+  read_vault_version ${ENV_DIR}
+  install_vault ${BUILD_DIR} ${CACHE_DIR} ${VAULT_VERSION}
+  prepare_environment ${BUILD_DIR} ${VAULT_BIN}
   echo "-> Vault buildpack compilation complete"
 }
 
