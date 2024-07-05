@@ -34,9 +34,9 @@ declare VAULT_BIN
 function parse_args {
   echo "---> Parsing expected arguments from Heroku"
 
-  if [[ $# > 3 ]]; then
-    echo "-----> Heroku has changed the arguments passed, unable to proceed"
-    exit $((1 + $#))
+  if [[ $# -lt 3 ]]; then
+    echo "-----> Heroku has changed the arguments passed, unable to proceed, only $# arguments detected. Expected 3 arguments."
+    exit $#
   fi
 
   BUILD_DIR=$1
